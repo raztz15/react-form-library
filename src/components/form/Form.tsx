@@ -15,8 +15,8 @@ export const Form = ({ inputs, buttons }: IForm) => {
         }
     }, [])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, checked, type } = e.target
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value, checked, type } = e.target as HTMLInputElement
 
         const inputValidation = inputs.find(input => input.id === name)?.validation
 
@@ -33,7 +33,8 @@ export const Form = ({ inputs, buttons }: IForm) => {
     }
 
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (Object.values(errors).some(error => error !== null)) {
+        e.preventDefault()
+        if (Object.values(errors).some(error => error !== null) || Object.values(form).length === 0) {
             e.preventDefault()
             inputs.forEach(({ id, validation, required }) => {
                 const inputElement = document.getElementById(id) as HTMLInputElement
@@ -44,7 +45,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
                 }
             })
-        } else if (Object.values(errors).every(error => error !== null)) {
+        } else {
             console.log(form)
         }
     }
@@ -72,7 +73,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     pattern={validation?.regex.source}
                     ref={index === 0 ? inputRef : undefined}
                     style={{ borderColor: errors[id] ? 'red' : '' }}
-                /> : <select id={id} name={id}>
+                /> : <select id={id} name={id} onChange={handleChange}>
                     {options?.map(option => <option key={option}>{option}</option>)}
                 </select>}
                 {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
