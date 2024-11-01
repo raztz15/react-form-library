@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { IForm } from '../../interfaces'
+import { IForm, InputType } from '../../interfaces'
 import './Form.css'
 
 export const Form = ({ inputs, buttons }: IForm) => {
@@ -16,7 +16,8 @@ export const Form = ({ inputs, buttons }: IForm) => {
     }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target
+        const { name, value, checked } = e.target
+
         const inputValidation = inputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
@@ -25,7 +26,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
             const { errorMessage } = inputValidation
             setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
         } else {
-            setForm(prevForm => ({ ...prevForm, [name]: value }))
+            setForm(prevForm => ({ ...prevForm, [name]: checked !== undefined ? checked : value }))
         }
     }
 
@@ -58,9 +59,9 @@ export const Form = ({ inputs, buttons }: IForm) => {
 
     return <form className="form--container">
         <div className='inputs--container'>
-            {inputs.map(({ label, inputType: type, id, validation, required }, index) => <div key={id}>
+            {inputs.map(({ label, inputType: type, id, validation, required, options }, index) => <div key={id}>
                 <label htmlFor={id}>{label}: </label>
-                <input
+                {type !== InputType.Select ? <input
                     type={type}
                     id={id}
                     name={id}
@@ -69,7 +70,9 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     pattern={validation?.regex.source}
                     ref={index === 0 ? inputRef : undefined}
                     style={{ borderColor: errors[id] ? 'red' : '' }}
-                />
+                /> : <select id={id} name={id}>
+                    {options?.map(option => <option key={option}>{option}</option>)}
+                </select>}
                 {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
             </div>)}
         </div>

@@ -16,6 +16,7 @@ export interface IInput {
     label: string
     validation?: { regex: RegExp, errorMessage: string }
     required?: boolean
+    options?: string[]
 }
 
 export interface IButton {

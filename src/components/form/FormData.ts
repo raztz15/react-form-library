@@ -61,6 +61,17 @@ export const inputs: IInput[] = [
         inputType: InputType.Number,
         label: "Age",
     },
+    {
+        id: 'gender',
+        inputType: InputType.Select,
+        label: "Gneder",
+        options: ['Male', 'Female', 'Non-binary']
+    },
+    {
+        id: 'getEmails',
+        inputType: InputType.Checkbox,
+        label: "Get Emails",
+    },
 ]
 
 export const buttons: IButton[] = [
