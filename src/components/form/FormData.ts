@@ -72,6 +72,12 @@ export const inputs: IInput[] = [
         inputType: InputType.Checkbox,
         label: "Get Emails",
     },
+    {
+        id: "userExperience",
+        inputType: InputType.Radio,
+        label: "Experience",
+        options: ['Excellent', 'Good', 'Poor']
+    }
 ]
 
 export const buttons: IButton[] = [

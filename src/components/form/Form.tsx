@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { IForm, InputType } from '../../interfaces'
 import './Form.css'
+import { useInputRenderer } from '../../hooks/useInputRenderer';
 
 export const Form = ({ inputs, buttons }: IForm) => {
 
@@ -32,6 +33,9 @@ export const Form = ({ inputs, buttons }: IForm) => {
         }
     }
 
+    const inputRender = useInputRenderer({ inputs, errors, handleChange, firstInput: inputs[0] })
+
+
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         if (Object.values(errors).some(error => error !== null) || Object.values(form).length === 0) {
@@ -62,22 +66,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
 
     return <form className="form--container">
         <div className='inputs--container'>
-            {inputs.map(({ label, inputType: type, id, validation, required, options }, index) => <div key={id}>
-                <label htmlFor={id}>{label}: </label>
-                {type !== InputType.Select ? <input
-                    type={type}
-                    id={id}
-                    name={id}
-                    required={required}
-                    onChange={handleChange}
-                    pattern={validation?.regex.source}
-                    ref={index === 0 ? inputRef : undefined}
-                    style={{ borderColor: errors[id] ? 'red' : '' }}
-                /> : <select id={id} name={id} onChange={handleChange}>
-                    {options?.map(option => <option key={option}>{option}</option>)}
-                </select>}
-                {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
-            </div>)}
+            {inputRender}
         </div>
         <div className="form-buttons--container" >
             {buttons.map(({ buttonType: type, text }) => <button key={text} type={type} onClick={(e) => getOnClickLogic(type, e)}>{text}</button>)}

@@ -29,3 +29,10 @@ export interface IForm {
     inputs: IInput[]
     buttons: IButton[]
 }
+
+export interface IUseInputRendererProps {
+    inputs: IInput[]
+    firstInput: IInput
+    errors: Record<string, string | boolean | null>
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+}
