@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { IForm } from '../../interfaces'
 import './Form.css'
+import { BorderColor } from '@mui/icons-material';
 export const Form = ({ inputs, buttons }: IForm) => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({});
@@ -54,6 +55,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     onChange={handleChange}
                     pattern={validation?.regex.source}
                     ref={index === 0 ? inputRef : undefined}
+                    style={{ borderColor: errors[id] ? 'red' : '' }}
                 />
             </div>)}
         </div>
