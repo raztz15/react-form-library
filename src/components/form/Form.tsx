@@ -16,7 +16,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
     }, [])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, checked } = e.target
+        const { name, value, checked, type } = e.target
 
         const inputValidation = inputs.find(input => input.id === name)?.validation
 
@@ -25,8 +25,10 @@ export const Form = ({ inputs, buttons }: IForm) => {
         if (inputValidation && !inputValidation.regex.test(value)) {
             const { errorMessage } = inputValidation
             setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
+        } else if (type !== InputType.Checkbox) {
+            setForm(prevForm => ({ ...prevForm, [name]: value }))
         } else {
-            setForm(prevForm => ({ ...prevForm, [name]: checked !== undefined ? checked : value }))
+            setForm(prevForm => ({ ...prevForm, [name]: checked }))
         }
     }
 
@@ -42,7 +44,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
                 }
             })
-        } else {
+        } else if (Object.values(errors).every(error => error !== null)) {
             console.log(form)
         }
     }
