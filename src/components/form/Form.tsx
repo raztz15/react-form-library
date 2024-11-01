@@ -4,6 +4,7 @@ import './Form.css'
 export const Form = ({ inputs, buttons }: IForm) => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({});
+    const [errors, setErrors] = useState<Record<string, string | null>>({});
 
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -15,7 +16,16 @@ export const Form = ({ inputs, buttons }: IForm) => {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
-        setForm(prevForm => ({ ...prevForm, [name]: value }))
+        const inputValidation = inputs.find(input => input.id === name)?.validation
+
+        setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
+
+        if (inputValidation && !inputValidation.regex.test(value)) {
+            const { errorMessage } = inputValidation
+            setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
+        } else {
+            setForm(prevForm => ({ ...prevForm, [name]: value }))
+        }
     }
 
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
