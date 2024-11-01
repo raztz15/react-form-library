@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { IForm, InputType } from '../../interfaces'
+import { IForm, IInput, InputType } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
+import { getAllNestedInputs } from '../../utils';
 
-export const Form = ({ title, inputs, buttons }: IForm) => {
+export const Form = ({ inputsGroups, buttons }: IForm) => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({});
     const [errors, setErrors] = useState<Record<string, string | null>>({});
+    const [allInputs] = useState<IInput[]>(getAllNestedInputs(inputsGroups));
 
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -19,7 +21,7 @@ export const Form = ({ title, inputs, buttons }: IForm) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, checked, type } = e.target as HTMLInputElement
 
-        const inputValidation = inputs.find(input => input.id === name)?.validation
+        const inputValidation = allInputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
 
@@ -33,14 +35,14 @@ export const Form = ({ title, inputs, buttons }: IForm) => {
         }
     }
 
-    const inputRender = useInputRenderer({ inputs, errors, handleChange, firstInput: inputs[0] })
+    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange, firstInput: inputsGroups[0].inputs[0] })
 
 
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault()
         if (Object.values(errors).some(error => error !== null) || Object.values(form).length === 0) {
             e.preventDefault()
-            inputs.forEach(({ id, validation, required }) => {
+            allInputs.forEach(({ id, validation, required }) => {
                 const inputElement = document.getElementById(id) as HTMLInputElement
                 const { value } = inputElement
                 if (required && !value) {
@@ -65,10 +67,7 @@ export const Form = ({ title, inputs, buttons }: IForm) => {
     }
 
     return <form className="form--container">
-        {title && <h2>{title}</h2>}
-        <div className='inputs--container'>
-            {inputRender}
-        </div>
+        <div className='inputs-groups--container'>{inputRender}</div>
         <div className="form-buttons--container" >
             {buttons.map(({ buttonType: type, text }) => <button key={text} type={type} onClick={(e) => getOnClickLogic(type, e)}>{text}</button>)}
         </div>
