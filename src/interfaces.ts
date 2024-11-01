@@ -7,7 +7,8 @@ export enum InputType {
     Password = 'password',
     Radio = 'radio',
     Tel = 'tel',
-    Select = 'select'
+    Select = 'select',
+    File = 'file'
 }
 
 interface IInputValidation {
@@ -26,6 +27,7 @@ export interface IInput {
     required?: boolean
     options?: string[]
     defaultValue?: string
+    accept?: string | string[]
 }
 
 export interface IButton {

@@ -12,6 +12,8 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
 
     const inputRef = useRef<HTMLInputElement>(null)
 
+    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange, firstInput: inputsGroups[0].inputs[0] })
+
     useEffect(() => {
         if (inputRef.current) {
             inputRef.current.focus()
@@ -29,14 +31,24 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
         })
     }, [])
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const { name, value, checked, type } = e.target as HTMLInputElement
+    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+        const { name, value, checked, type, files, accept } = e.target as HTMLInputElement
+        const file = files?.[0]
+
 
         const inputValidation = allInputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
 
-        if (inputValidation && !inputValidation.regex?.test(value)) {
+        if (file && accept) {
+            const isValidType = new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()));
+            if (!isValidType && inputValidation) {
+                const { errorMessage } = inputValidation
+                setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
+                e.target.value = ''
+            }
+        }
+        else if (inputValidation && !inputValidation.regex?.test(value)) {
             const { errorMessage } = inputValidation
             setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
         } else if (type !== InputType.Checkbox) {
@@ -45,8 +57,6 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
             setForm(prevForm => ({ ...prevForm, [name]: checked }))
         }
     }
-
-    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange, firstInput: inputsGroups[0].inputs[0] })
 
 
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {

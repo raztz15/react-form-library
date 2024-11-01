@@ -18,6 +18,14 @@ export const inputsGroups: IInpuitsGroups[] = [
                 },
                 required: true
 
+            },
+            {
+                id: 'cvFile',
+                inputType: InputType.File,
+                label: 'Uplaod Resume',
+                required: true,
+                accept: [".pdf", '.doc', 'docx'],
+                validation: { errorMessage: 'Not a valid file!' }
             }
         ]
     },

@@ -15,7 +15,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
     const renderInputsGroups = inputsGroups.map(({ groupLabel, inputs }) => <div key={groupLabel} className="inputs--container">
         {/* TODO ---> Check what to do when there is no label */}
         {groupLabel && <h2>{groupLabel}</h2>}
-        {inputs.map(({ inputType, options, required, id, validation, label, defaultValue }) => {
+        {inputs.map(({ inputType, options, required, id, validation, label, defaultValue, accept }) => {
             switch (inputType) {
                 case InputType.Radio:
                     return <div key={id} className="radio-input">
@@ -40,6 +40,20 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                         <select id={id} name={id} onChange={handleChange}>
                             {options?.map(option => <option key={option} value={defaultValue}>{option}</option>)}
                         </select>
+                    </div>
+
+                case InputType.File:
+                    return <div key={id}>
+                        <label htmlFor={id}>{label}:</label>
+                        <input
+                            type={inputType}
+                            id={id}
+                            name={id}
+                            required={required}
+                            onChange={handleChange}
+                            accept={Array.isArray(accept) ? accept.join(',') : accept}
+                        />
+                        {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
                     </div>
 
                 default:
