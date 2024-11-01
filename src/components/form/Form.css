@@ -1,10 +1,16 @@
 .form--container {
   display: flex;
   flex-direction: column;
+  gap: 20px;
   border: 1px solid black;
   border-radius: 8px;
   background-color: #f4f7f9;
   padding: 15px;
+}
+
+.inputs-groups--container {
+  display: flex;
+  justify-content: space-between;
 }
 
 .inputs--container {
