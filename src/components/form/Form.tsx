@@ -18,6 +18,17 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
         }
     }, [])
 
+    useEffect(() => {
+        inputsGroups.forEach(group => {
+            group.inputs.forEach(input => {
+                const { defaultValue } = input
+                if (defaultValue) {
+                    setForm(prevForm => ({ ...prevForm, [input.id]: defaultValue }))
+                }
+            })
+        })
+    }, [])
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, checked, type } = e.target as HTMLInputElement
 
