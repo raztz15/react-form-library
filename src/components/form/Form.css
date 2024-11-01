@@ -18,6 +18,12 @@
   min-width: 100px;
 }
 
+.input-error-message {
+  color: red;
+  font-weight: 600;
+  padding-top: 5px;
+}
+
 .form-buttons--container {
   display: flex;
   gap: 15px;

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { IForm } from '../../interfaces'
 import './Form.css'
-import { BorderColor } from '@mui/icons-material';
+
 export const Form = ({ inputs, buttons }: IForm) => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({});
@@ -30,12 +30,24 @@ export const Form = ({ inputs, buttons }: IForm) => {
     }
 
     const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        e.preventDefault()
+        if (Object.values(errors).some(error => error !== null)) {
+            e.preventDefault()
+            inputs.forEach(({ id, validation, required }) => {
+                const inputElement = document.getElementById(id) as HTMLInputElement
+                const { value } = inputElement
+                if (required && !value) {
+                    setErrors(prevErrors => ({ ...prevErrors, [id]: 'This field is required.' }))
+                } else if (validation?.regex.test(value)) {
+                    setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
+                }
+            })
+        }
         console.log(form)
     }
 
     const handleReset = () => {
         setForm({})
+        setErrors({})
     }
 
     const getOnClickLogic = (buttonType: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -57,6 +69,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     ref={index === 0 ? inputRef : undefined}
                     style={{ borderColor: errors[id] ? 'red' : '' }}
                 />
+                {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
             </div>)}
         </div>
         <div className="form-buttons--container" >
