@@ -1,9 +1,9 @@
-import { IButton, IInput } from "../../interfaces"
+import { IButton, IInput, InputType } from "../../interfaces"
 
 export const inputs: IInput[] = [
     {
         id: 'name',
-        inputType: "text",
+        inputType: InputType.Text,
         label: "Name",
         validation: {
             regex: /^[A-Z][a-zA-Z]*([-'\s][A-Za-z]+)*$/,
@@ -13,7 +13,7 @@ export const inputs: IInput[] = [
     },
     {
         id: 'lastName',
-        inputType: "text",
+        inputType: InputType.Text,
         label: "Last Name",
         validation: {
             regex: /^[A-Z][a-zA-Z]*([-'\s][A-Za-z]+)*$/,
@@ -23,7 +23,7 @@ export const inputs: IInput[] = [
     },
     {
         id: 'email',
-        inputType: "email",
+        inputType: InputType.Email,
         label: "Email",
         required: true,
         validation: {
@@ -33,7 +33,7 @@ export const inputs: IInput[] = [
     },
     {
         id: 'username',
-        inputType: "text",
+        inputType: InputType.Text,
         label: "Username",
         validation: {
             regex: /^[a-zA-Z0-9]{3,15}$/,
@@ -43,7 +43,7 @@ export const inputs: IInput[] = [
     },
     {
         id: 'phone',
-        inputType: "tel",
+        inputType: InputType.Tel,
         label: "Phone",
         validation: {
             regex: /^05[2-9]-?\d{7}$/,
@@ -53,12 +53,12 @@ export const inputs: IInput[] = [
     },
     {
         id: 'birthday',
-        inputType: "date",
+        inputType: InputType.Date,
         label: "Birthday",
     },
     {
         id: 'age',
-        inputType: "number",
+        inputType: InputType.Number,
         label: "Age",
     },
 ]
