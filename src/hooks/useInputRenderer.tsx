@@ -15,9 +15,9 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
     const renderInputs = inputs.map(({ inputType, options, required, id, validation, label }) => {
         switch (inputType) {
             case InputType.Radio:
-                return <div key={id}>
+                return <div key={id} className="radio-input">
                     <label htmlFor={id}>{label}:</label>
-                    {options?.map(option => <div key={option} className="radio-option">
+                    <div>{options?.map(option => <div key={option} className="radio-option">
                         <input
                             type={inputType}
                             id={`${id}--${option}`}
@@ -28,7 +28,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
 
                         />
                         <label htmlFor={`${id}--${option}`}>{option}</label>
-                    </div>)}
+                    </div>)}</div>
                 </div>
 
             case InputType.Select:
