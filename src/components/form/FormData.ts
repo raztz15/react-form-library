@@ -78,7 +78,8 @@ export const inputs: IInput[] = [
         id: "userExperience",
         inputType: InputType.Radio,
         label: "Experience",
-        options: ['Excellent', 'Good', 'Poor']
+        options: ['Excellent', 'Good', 'Poor'],
+        defaultValue: 'Good'
     }
 ]
 

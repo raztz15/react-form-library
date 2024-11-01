@@ -25,6 +25,7 @@ export interface IInput {
     validation?: IInputValidation
     required?: boolean
     options?: string[]
+    defaultValue?: string
 }
 
 export interface IButton {

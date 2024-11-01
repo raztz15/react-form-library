@@ -12,7 +12,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
         }
     }, [])
 
-    const renderInputs = inputs.map(({ inputType, options, required, id, validation, label }) => {
+    const renderInputs = inputs.map(({ inputType, options, required, id, validation, label, defaultValue }) => {
         switch (inputType) {
             case InputType.Radio:
                 return <div key={id} className="radio-input">
@@ -25,7 +25,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
                             value={option}
                             required={required}
                             onChange={handleChange}
-
+                            checked={defaultValue === option}
                         />
                         <label htmlFor={`${id}--${option}`}>{option}</label>
                     </div>)}</div>
@@ -35,7 +35,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
                 return <div key={id}>
                     <label htmlFor={id}>{label}:</label>
                     <select id={id} name={id} onChange={handleChange}>
-                        {options?.map(option => <option key={option} value={option}>{option}</option>)}
+                        {options?.map(option => <option key={option} value={defaultValue}>{option}</option>)}
                     </select>
                 </div>
 
@@ -43,6 +43,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
                 return <div key={id}>
                     <label htmlFor={id}>{label}:</label>
                     <input
+                        value={defaultValue}
                         type={inputType}
                         id={id}
                         name={id}
