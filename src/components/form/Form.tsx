@@ -23,7 +23,7 @@ export const Form = ({ title, inputs, buttons }: IForm) => {
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
 
-        if (inputValidation && !inputValidation.regex.test(value)) {
+        if (inputValidation && !inputValidation.regex?.test(value)) {
             const { errorMessage } = inputValidation
             setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
         } else if (type !== InputType.Checkbox) {
@@ -45,7 +45,7 @@ export const Form = ({ title, inputs, buttons }: IForm) => {
                 const { value } = inputElement
                 if (required && !value) {
                     setErrors(prevErrors => ({ ...prevErrors, [id]: 'This field is required.' }))
-                } else if (validation?.regex.test(value)) {
+                } else if (validation?.regex?.test(value)) {
                     setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
                 }
             })

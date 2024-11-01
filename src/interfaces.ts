@@ -10,11 +10,19 @@ export enum InputType {
     Select = 'select'
 }
 
+interface IInputValidation {
+    errorMessage: string
+    regex?: RegExp
+    min?: number
+    max?: number
+    options?: string[]
+}
+
 export interface IInput {
     id: string
     inputType: InputType
     label: string
-    validation?: { regex: RegExp, errorMessage: string }
+    validation?: IInputValidation
     required?: boolean
     options?: string[]
 }

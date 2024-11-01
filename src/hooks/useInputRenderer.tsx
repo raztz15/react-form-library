@@ -48,7 +48,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
                         name={id}
                         required={required}
                         onChange={handleChange}
-                        pattern={validation?.regex.source}
+                        pattern={validation?.regex?.source}
                         ref={firstInput.id === id ? inputRef : undefined}
                         style={{ borderColor: errors[id] ? 'red' : '' }}
                     />
