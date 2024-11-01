@@ -3,7 +3,7 @@ import { IForm, InputType } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
 
-export const Form = ({ inputs, buttons }: IForm) => {
+export const Form = ({ title, inputs, buttons }: IForm) => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({});
     const [errors, setErrors] = useState<Record<string, string | null>>({});
@@ -65,6 +65,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
     }
 
     return <form className="form--container">
+        {title && <h2>{title}</h2>}
         <div className='inputs--container'>
             {inputRender}
         </div>

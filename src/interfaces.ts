@@ -26,6 +26,7 @@ export interface IButton {
 }
 
 export interface IForm {
+    title?: string
     inputs: IInput[]
     buttons: IButton[]
 }

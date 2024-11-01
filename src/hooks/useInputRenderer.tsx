@@ -16,6 +16,7 @@ export function useInputRenderer({ inputs, firstInput, errors, handleChange }: I
         switch (inputType) {
             case InputType.Radio:
                 return <div key={id}>
+                    <label htmlFor={id}>{label}:</label>
                     {options?.map(option => <div key={option} className="radio-option">
                         <input
                             type={inputType}

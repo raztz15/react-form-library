@@ -1,5 +1,7 @@
 import { IButton, IInput, InputType } from "../../interfaces"
 
+export const title = 'Form Factory'
+
 export const inputs: IInput[] = [
     {
         id: 'name',
