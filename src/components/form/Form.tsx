@@ -41,8 +41,9 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
                 }
             })
+        } else {
+            console.log(form)
         }
-        console.log(form)
     }
 
     const handleReset = () => {
