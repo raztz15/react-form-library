@@ -9,7 +9,7 @@ export const Form = ({ inputs, buttons }: IForm) => {
 
     }
 
-    return <div className="form--container">
+    return <form className="form--container">
         <div className='inputs--container'>
             {inputs.map(({ label, inputType: type, id, validation, required }, index) => <div key={id}>
                 <label htmlFor={id}>{label}: </label>
@@ -23,9 +23,9 @@ export const Form = ({ inputs, buttons }: IForm) => {
                     ref={index === 0 ? inputRef : undefined}
                 />
             </div>)}
-            <div className="form-buttons--container" >
-                {buttons.map(({ buttonType: type, text }) => <button key={text} type={type}>{text}</button>)}
-            </div>
         </div>
-    </div>
+        <div className="form-buttons--container" >
+            {buttons.map(({ buttonType: type, text }) => <button key={text} type={type}>{text}</button>)}
+        </div>
+    </form>
 }

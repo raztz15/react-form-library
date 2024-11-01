@@ -1,6 +1,6 @@
 .form--container {
   display: flex;
-  flex-direction: "column";
+  flex-direction: column;
   border: 1px solid black;
   border-radius: 8px;
   background-color: #f4f7f9;
