@@ -1,12 +1,21 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { IForm } from '../../interfaces'
 import './Form.css'
 export const Form = ({ inputs, buttons }: IForm) => {
 
+    const [form, setForm] = useState<Record<string, string | boolean>>({});
+
     const inputRef = useRef<HTMLInputElement>(null)
 
-    const handleChange = () => {
+    useEffect(() => {
+        if (inputRef.current) {
+            inputRef.current.focus()
+        }
+    }, [])
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target
+        setForm(prevForm => ({ ...prevForm, [name]: value }))
     }
 
     return <form className="form--container">
