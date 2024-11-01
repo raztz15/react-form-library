@@ -34,14 +34,19 @@ export interface IButton {
     onClick: () => void
 }
 
-export interface IForm {
-    title?: string
+export interface IInpuitsGroups {
+    groupLabel?: string
     inputs: IInput[]
+}
+
+export interface IForm {
+    inputsGroups: IInpuitsGroups[]
+    title?: string
     buttons: IButton[]
 }
 
 export interface IUseInputRendererProps {
-    inputs: IInput[]
+    inputsGroups: IInpuitsGroups[]
     firstInput: IInput
     errors: Record<string, string | boolean | null>
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
