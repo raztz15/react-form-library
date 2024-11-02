@@ -28,6 +28,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                             required={required}
                             onChange={handleChange}
                             maxLength={validation?.maxLength}
+                            style={{ borderColor: errors[id] ? 'red' : '' }}
                         />
                     </div>
                 case InputType.Radio:
