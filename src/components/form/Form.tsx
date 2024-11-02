@@ -39,22 +39,25 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
         const inputValidation = allInputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
-
-        if (file && accept) {
-            const isValidType = new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()));
-            if (!isValidType && inputValidation) {
+        if (inputValidation) {
+            const { maxFileSize } = inputValidation
+            if (file && accept && maxFileSize) {
+                const isValidType = (new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()))) &&
+                    file.size / 1000000 < maxFileSize;
+                if (!isValidType) {
+                    const { errorMessage } = inputValidation
+                    setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
+                    e.target.value = ''
+                }
+            }
+            else if (!inputValidation.regex?.test(value)) {
                 const { errorMessage } = inputValidation
                 setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
-                e.target.value = ''
+            } else if (type !== InputType.Checkbox) {
+                setForm(prevForm => ({ ...prevForm, [name]: value }))
+            } else {
+                setForm(prevForm => ({ ...prevForm, [name]: checked }))
             }
-        }
-        else if (inputValidation && !inputValidation.regex?.test(value)) {
-            const { errorMessage } = inputValidation
-            setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
-        } else if (type !== InputType.Checkbox) {
-            setForm(prevForm => ({ ...prevForm, [name]: value }))
-        } else {
-            setForm(prevForm => ({ ...prevForm, [name]: checked }))
         }
     }
 

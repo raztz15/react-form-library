@@ -17,6 +17,7 @@ interface IInputValidation {
     min?: number
     max?: number
     options?: string[]
+    maxFileSize?: number
 }
 
 export interface IInput {
@@ -28,6 +29,7 @@ export interface IInput {
     options?: string[]
     defaultValue?: string
     accept?: string | string[]
+
 }
 
 export interface IButton {

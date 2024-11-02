@@ -25,7 +25,10 @@ export const inputsGroups: IInpuitsGroups[] = [
                 label: 'Uplaod Resume',
                 required: true,
                 accept: [".pdf", '.doc', 'docx'],
-                validation: { errorMessage: 'Not a valid file!' }
+                validation: {
+                    errorMessage: 'Not a valid file!',
+                    maxFileSize: 7
+                },
             }
         ]
     },
