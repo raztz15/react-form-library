@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from 'react'
 import { IForm, IInput, InputType } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
-import { getAllNestedInputs } from '../../utils';
+import { getAllNestedInputs, getOnClickLogic } from '../../utils';
 
 // Form component for rendering input fields and handling form state
 export const Form = ({ inputsGroups, buttons }: IForm): JSX.Element => {
@@ -85,16 +85,10 @@ export const Form = ({ inputsGroups, buttons }: IForm): JSX.Element => {
         setErrors({})
     }
 
-    // Logic to handle button clicks
-    const getOnClickLogic = (buttonType: string, e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-        if (buttonType === 'reset') return handleReset()
-        if (buttonType === 'submit') return handleSubmit(e)
-    }
-
     return <form className="form--container">
         <div className='inputs-groups--container'>{inputRender}</div>
         <div className="form-buttons--container" >
-            {buttons.map(({ buttonType: type, text }) => <button key={text} type={type} onClick={(e) => getOnClickLogic(type, e)}>{text}</button>)}
+            {buttons.map(({ buttonType: type, text }) => <button key={text} type={type} onClick={(e) => getOnClickLogic(type, e, handleReset, handleSubmit)}>{text}</button>)}
         </div>
     </form>
 }

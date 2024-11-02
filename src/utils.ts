@@ -15,3 +15,14 @@ export function getAllNestedInputs(inputsGroups: IInpuitsGroups[]) {
 
     return newArr; // Return the accumulated array of inputs
 }
+
+// Logic to handle button clicks
+export function getOnClickLogic(
+    buttonType: string,
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    handleReset: () => void,
+    handleSubmit: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+) {
+    if (buttonType === 'reset') return handleReset()
+    if (buttonType === 'submit') return handleSubmit(e)
+}
