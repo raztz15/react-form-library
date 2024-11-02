@@ -9,6 +9,11 @@ export const inputsGroups: IInpuitsGroups[] = [
         groupLabel: 'Form1',
         inputs: [
             {
+                id: 'message',
+                inputType: InputType.TextArea,
+                label: 'Message'
+            },
+            {
                 id: 'address',
                 inputType: InputType.Text,
                 label: "Address",

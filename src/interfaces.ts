@@ -8,7 +8,8 @@ export enum InputType {
     Radio = 'radio',
     Tel = 'tel',
     Select = 'select',
-    File = 'file'
+    File = 'file',
+    TextArea = 'textArea'
 }
 
 interface IInputValidation {
@@ -18,6 +19,7 @@ interface IInputValidation {
     max?: number
     options?: string[]
     maxFileSize?: number
+    maxLength?: number
 }
 
 export interface IInput {
@@ -53,5 +55,5 @@ export interface IUseInputRendererProps {
     inputsGroups: IInpuitsGroups[]
     firstInput: IInput
     errors: Record<string, string | boolean | null>
-    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void
 }

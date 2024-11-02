@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { IForm, IInput, InputType } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
@@ -31,33 +31,27 @@ export const Form = ({ inputsGroups, buttons }: IForm) => {
         })
     }, [])
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         const { name, value, checked, type, files, accept } = e.target as HTMLInputElement
         const file = files?.[0]
-
 
         const inputValidation = allInputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
-        if (inputValidation) {
-            const { maxFileSize } = inputValidation
-            if (file && accept && maxFileSize) {
-                const isValidType = (new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()))) &&
-                    file.size / 1000000 < maxFileSize;
-                if (!isValidType) {
-                    const { errorMessage } = inputValidation
-                    setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
-                    e.target.value = ''
-                }
+        if (file && accept && inputValidation?.maxFileSize) {
+            const isValidType = (new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()))) &&
+                file.size / 1000000 < inputValidation.maxFileSize;
+            if (!isValidType) {
+                setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
+                e.target.value = ''
             }
-            else if (!inputValidation.regex?.test(value)) {
-                const { errorMessage } = inputValidation
-                setErrors(prevErrors => ({ ...prevErrors, [name]: errorMessage }))
-            } else if (type !== InputType.Checkbox) {
-                setForm(prevForm => ({ ...prevForm, [name]: value }))
-            } else {
-                setForm(prevForm => ({ ...prevForm, [name]: checked }))
-            }
+        }
+        else if (inputValidation && !inputValidation.regex?.test(value)) {
+            setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
+        } else if (type !== InputType.Checkbox) {
+            setForm(prevForm => ({ ...prevForm, [name]: value }))
+        } else {
+            setForm(prevForm => ({ ...prevForm, [name]: checked }))
         }
     }
 

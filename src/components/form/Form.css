@@ -19,6 +19,10 @@
   gap: 10px;
 }
 
+.textarea-input {
+  display: flex;
+}
+
 .radio-input {
   display: flex;
 }

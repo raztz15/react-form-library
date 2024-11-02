@@ -12,11 +12,24 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
         }
     }, [])
 
+
+
     const renderInputsGroups = inputsGroups.map(({ groupLabel, inputs }) => <div key={groupLabel} className="inputs--container">
         {/* TODO ---> Check what to do when there is no label */}
         {groupLabel && <h2>{groupLabel}</h2>}
         {inputs.map(({ inputType, options, required, id, validation, label, defaultValue, accept }) => {
             switch (inputType) {
+                case InputType.TextArea:
+                    return <div className="textarea-input" key={id}>
+                        <label htmlFor={id}>{label}:</label>
+                        <textarea
+                            name={id}
+                            id={id}
+                            required={required}
+                            onChange={handleChange}
+                            maxLength={validation?.maxLength}
+                        />
+                    </div>
                 case InputType.Radio:
                     return <div key={id} className="radio-input">
                         <label htmlFor={id}>{label}:</label>
