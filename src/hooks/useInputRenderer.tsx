@@ -1,25 +1,33 @@
 import { useEffect, useRef } from "react";
 import { InputType, IUseInputRendererProps } from "../interfaces";
 
+/**
+ * Custom hook to render input fields based on provided input groups and handle focus management.
+ *
+ * @param {IUseInputRendererProps} props - The props containing input groups, first input for focusing, error states, and change handler.
+ * @returns {JSX.Element[]} An array of JSX elements representing the rendered input fields.
+ */
+export function useInputRenderer({ inputsGroups, firstInput, errors, handleChange }: IUseInputRendererProps): JSX.Element[] {
 
-export function useInputRenderer({ inputsGroups, firstInput, errors, handleChange }: IUseInputRendererProps) {
-
+    // Reference to the first input element for auto-focusing
     const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
+        // Focus the first input element if it exists
         if (inputRef.current) {
             inputRef.current.focus()
         }
     }, [])
 
-
-
+    // Render input groups
     const renderInputsGroups = inputsGroups.map(({ groupLabel, inputs }) => <div key={groupLabel} className="inputs--container">
         {/* TODO ---> Check what to do when there is no label */}
+        {/* Render group label if it exists */}
         {groupLabel && <h2>{groupLabel}</h2>}
         {inputs.map(({ inputType, options, required, id, validation, label, defaultValue, accept }) => {
             switch (inputType) {
                 case InputType.TextArea:
+                    // Render a textarea input
                     return <div className="textarea-input" key={id}>
                         <label htmlFor={id}>{label}:</label>
                         <textarea
@@ -32,6 +40,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                         />
                     </div>
                 case InputType.Radio:
+                    // Render radio input options
                     return <div key={id} className="radio-input">
                         <label htmlFor={id}>{label}:</label>
                         <div>{options?.map(option => <div key={option} className="radio-option">
@@ -49,6 +58,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                     </div>
 
                 case InputType.Select:
+                    // Render a select input
                     return <div key={id}>
                         <label htmlFor={id}>{label}:</label>
                         <select id={id} name={id} onChange={handleChange}>
@@ -57,6 +67,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                     </div>
 
                 case InputType.File:
+                    // Render file input
                     return <div key={id}>
                         <label htmlFor={id}>{label}:</label>
                         <input
@@ -71,6 +82,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                     </div>
 
                 default:
+                    // Render default input types (text, number, etc.)
                     return <div key={id}>
                         <label htmlFor={id}>{label}:</label>
                         <input
