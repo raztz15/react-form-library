@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { InputType, IUseInputRendererProps } from "../interfaces";
+import { IInput, InputType, IUseInputRendererProps } from "../interfaces";
 
 /**
  * Custom hook to render input fields based on provided input groups and handle focus management.
@@ -7,10 +7,12 @@ import { InputType, IUseInputRendererProps } from "../interfaces";
  * @param {IUseInputRendererProps} props - The props containing input groups, first input for focusing, error states, and change handler.
  * @returns {JSX.Element[]} An array of JSX elements representing the rendered input fields.
  */
-export function useInputRenderer({ inputsGroups, firstInput, errors, handleChange }: IUseInputRendererProps): JSX.Element[] {
+export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInputRendererProps): JSX.Element[] {
 
     // Reference to the first input element for auto-focusing
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
+
+    const firstInputToRender: IInput = inputsGroups[0].inputs[0]
 
     useEffect(() => {
         // Focus the first input element if it exists
@@ -37,7 +39,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                             onChange={handleChange}
                             maxLength={validation?.maxLength}
                             style={{ borderColor: errors[id] ? 'red' : '' }}
-                            ref={firstInput.id === id ? inputRef as React.RefObject<HTMLTextAreaElement> : undefined}
+                            ref={firstInputToRender.id === id ? inputRef as React.RefObject<HTMLTextAreaElement> : undefined}
                         />
                     </div>
                 case InputType.Radio:
@@ -94,7 +96,7 @@ export function useInputRenderer({ inputsGroups, firstInput, errors, handleChang
                             required={required}
                             onChange={handleChange}
                             pattern={validation?.regex?.source}
-                            ref={firstInput.id === id ? inputRef as React.RefObject<HTMLInputElement> : undefined}
+                            ref={firstInputToRender.id === id ? inputRef as React.RefObject<HTMLInputElement> : undefined}
                             style={{ borderColor: errors[id] ? 'red' : '' }}
                         />
                         {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}
