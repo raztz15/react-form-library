@@ -26,3 +26,17 @@ export function getOnClickLogic(
     if (buttonType === 'reset') return handleReset()
     if (buttonType === 'submit') return handleSubmit(e)
 }
+
+export async function submitForm<T>(url: string, request: RequestInit): Promise<T | void> {
+    try {
+        const response = await fetch(url, request)
+        if (!response.ok) {
+            throw new Error('Network response was not ok')
+        }
+        const data = await response.json()
+        return data
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        throw error
+    }
+}
