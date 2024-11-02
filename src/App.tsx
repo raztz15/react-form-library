@@ -1,3 +1,4 @@
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Form } from "./components/form/Form"
 import { buttons, inputsGroups } from "./components/form/FormData"
 
@@ -5,7 +6,11 @@ function App() {
 
   return (
     <>
-      <Form buttons={buttons} inputsGroups={inputsGroups} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Form buttons={buttons} inputsGroups={inputsGroups} submitUrl="https://jsonplaceholder.typicode.com/posts" successSubmitionUrl="/success" />} />
+        </Routes>
+      </BrowserRouter>
     </>
   )
 }
