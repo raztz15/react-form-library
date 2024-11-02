@@ -55,12 +55,19 @@ export interface IForm {
     inputsGroups: IInpuitsGroups[]; // Array of input groups
     title?: string; // Optional title for the form
     buttons: IButton[]; // Array of buttons for form actions
+    submitUrl: string // URL to call the appropriate API
+    successSubmitionUrl: string // New property for navigation
 }
 
 // Props interface for the useInputRenderer hook
 export interface IUseInputRendererProps {
     inputsGroups: IInpuitsGroups[]; // Input groups to render
-    firstInput: IInput; // The first input to focus on
     errors: Record<string, string | boolean | null>; // Error messages for inputs
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void; // Change handler for inputs
+}
+
+export interface ISubmitResponse<T> {
+    success: boolean
+    message?: string
+    data?: T
 }

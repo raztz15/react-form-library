@@ -38,6 +38,12 @@
   padding-top: 5px;
 }
 
+.submission-error-message {
+  color: red;
+  margin-top: 1em;
+  font-weight: bold;
+}
+
 .form-buttons--container {
   display: flex;
   gap: 15px;

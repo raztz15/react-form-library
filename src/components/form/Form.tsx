@@ -1,18 +1,22 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import { IForm, IInput, InputType } from '../../interfaces'
+import { IForm, IInput, InputType, ISubmitResponse } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
-import { getAllNestedInputs, getOnClickLogic } from '../../utils';
+import { getAllNestedInputs, getOnClickLogic, submitForm } from '../../utils';
+import { useNavigate } from 'react-router-dom'
 
 // Form component for rendering input fields and handling form state
-export const Form = ({ inputsGroups, buttons }: IForm): JSX.Element => {
+export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: IForm): JSX.Element => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({}); // State to hold form values
     const [errors, setErrors] = useState<Record<string, string | null>>({}); // State to hold error messages
     const [allInputs] = useState<IInput[]>(getAllNestedInputs(inputsGroups)); // Retrieve all nested inputs from groups
+    const [submitError, setSubmitError] = useState<string>('');
+
+    const navigate = useNavigate()
 
     // Render inputs using the custom hook
-    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange, firstInput: inputsGroups[0].inputs[0] })
+    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange })
 
     // Initialize form state with default values from inputs
     useEffect(() => {
@@ -58,24 +62,46 @@ export const Form = ({ inputsGroups, buttons }: IForm): JSX.Element => {
     }
 
     // Handle form submission
-    const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    async function handleSubmit<T>(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
         e.preventDefault()
+
+        // Reset previous errors
+        setSubmitError('');
+
+        const currErrors: Record<string, string> = {}
+        allInputs.forEach(input => {
+            const inputElement = document.getElementById(input.id) as HTMLInputElement
+            if (inputElement && input.required && !inputElement.value) {
+                currErrors[inputElement.id] = input.validation?.errorMessage || 'This field is required.'
+            } else if (input.validation?.regex?.test(inputElement.value)) {
+                currErrors[inputElement.id] = input.validation.errorMessage || 'Invalid input.'
+            }
+        })
+
+        setErrors(currErrors)
         // Check for errors or empty form
-        if (Object.values(errors).some(error => error !== null) || Object.values(form).length === 0) {
-            e.preventDefault() // Prevent submission if errors exist
-            allInputs.forEach(({ id, validation, required }) => {
-                const inputElement = document.getElementById(id) as HTMLInputElement
-                const { value } = inputElement
-                // Validate required fields
-                if (required && !value) {
-                    setErrors(prevErrors => ({ ...prevErrors, [id]: 'This field is required.' }))
-                    // Validate against regex if provided
-                } else if (validation?.regex?.test(value)) {
-                    setErrors(prevErrors => ({ ...prevErrors, [id]: validation.errorMessage }))
-                }
-            })
+        if (Object.values(currErrors).some(error => error !== null) || Object.values(form).length === 0) {
+            return
         } else {
-            console.log(form) // Submit the form data
+            try {
+                const response = await submitForm(submitUrl, {
+                    body: JSON.stringify(form),
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                if (response) {
+                    // Navigate to the success URL if provided
+                    navigate(successSubmitionUrl)
+                } else {
+                    {/*TODO ---> Check if this interface is needed*/ }
+                    setSubmitError((response as unknown as ISubmitResponse<T>).message || 'Submission failed. Please try again.')
+                }
+            } catch (error) {
+                console.error('Form submission error: ', error)
+                setSubmitError('An error occurred during submission.')
+            }
         }
     }
 
@@ -87,6 +113,7 @@ export const Form = ({ inputsGroups, buttons }: IForm): JSX.Element => {
 
     return <form className="form--container">
         <div className='inputs-groups--container'>{inputRender}</div>
+        {submitError && <div className='submission-error-message'>{submitError}</div>}
         <div className="form-buttons--container" >
             {buttons.map(({ buttonType: type, text }) => <button key={text} type={type} onClick={(e) => getOnClickLogic(type, e, handleReset, handleSubmit)}>{text}</button>)}
         </div>
