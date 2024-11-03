@@ -6,12 +6,13 @@ import { getAllNestedInputs, getOnClickLogic, submitForm } from '../../utils';
 import { useNavigate } from 'react-router-dom'
 
 // Form component for rendering input fields and handling form state
-export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: IForm): JSX.Element => {
+export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, useLocalStorage, localStorageKey }: IForm): JSX.Element => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>({}); // State to hold form values
     const [errors, setErrors] = useState<Record<string, string | null>>({}); // State to hold error messages
     const [allInputs] = useState<IInput[]>(getAllNestedInputs(inputsGroups)); // Retrieve all nested inputs from groups
     const [submitError, setSubmitError] = useState<string>('');
+
 
     const navigate = useNavigate()
 
@@ -33,6 +34,7 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
     // Handle input changes and validation
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
         const { name, value, checked, type, files, accept } = e.target as HTMLInputElement
+        const newValue = type === InputType.Checkbox ? checked : value
         const file = files?.[0] // Get the selected file if it exists
 
         const inputValidation = allInputs.find(input => input.id === name)?.validation
@@ -43,7 +45,6 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
         if (file && accept && inputValidation?.maxFileSize) {
             const isValidType = (new RegExp(accept.replace(/,/g, '|')).test(file.type) || accept.split(',').some(type => file.name.endsWith(type.trim()))) &&
                 file.size / 1000000 < inputValidation.maxFileSize;
-
             // If invalid, set error and clear input value
             if (!isValidType) {
                 setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
@@ -54,10 +55,12 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
         else if (inputValidation && !inputValidation.regex?.test(value)) {
             setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
             // Update form state based on input type
-        } else if (type !== InputType.Checkbox) {
-            setForm(prevForm => ({ ...prevForm, [name]: value }))
         } else {
-            setForm(prevForm => ({ ...prevForm, [name]: checked }))
+            setForm(prevForm => {
+                const updatedForm = { ...prevForm, [name]: newValue }
+                if (useLocalStorage) localStorage.setItem(localStorageKey || 'formData', JSON.stringify(updatedForm))
+                return updatedForm
+            })
         }
     }
 

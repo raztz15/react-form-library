@@ -8,7 +8,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Form buttons={buttons} inputsGroups={inputsGroups} submitUrl="https://jsonplaceholder.typicode.com/posts" successSubmitionUrl="/success" />} />
+          <Route path="/" element={<Form buttons={buttons} inputsGroups={inputsGroups} submitUrl="https://jsonplaceholder.typicode.com/posts" successSubmitionUrl="/success" useLocalStorage={true} />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -57,6 +57,8 @@ export interface IForm {
     buttons: IButton[]; // Array of buttons for form actions
     submitUrl: string // URL to call the appropriate API
     successSubmitionUrl: string // New property for navigation
+    useLocalStorage?: boolean // Giving the user to option the data in localstorage
+    localStorageKey?: string // Defining the localstorage form key
 }
 
 // Props interface for the useInputRenderer hook
