@@ -4,11 +4,14 @@ import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
 import { getAllNestedInputs, getOnClickLogic, submitForm } from '../../utils';
 import { useNavigate } from 'react-router-dom'
+import { useDebouncer } from '../../hooks/useDebouncer';
 
 // Form component for rendering input fields and handling form state
 export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, useLocalStorage, localStorageKey }: IForm): JSX.Element => {
 
-    const [form, setForm] = useState<Record<string, string | boolean>>({}); // State to hold form values
+    const [form, setForm] = useState<Record<string, string | boolean>>(() => {
+        return useLocalStorage ? JSON.parse(localStorage.getItem(localStorageKey || 'FormData') || '{}') : {}
+    }); // State to hold form values
     const [errors, setErrors] = useState<Record<string, string | null>>({}); // State to hold error messages
     const [allInputs] = useState<IInput[]>(getAllNestedInputs(inputsGroups)); // Retrieve all nested inputs from groups
     const [submitError, setSubmitError] = useState<string>('');
@@ -18,6 +21,14 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
 
     // Render inputs using the custom hook
     const inputRender = useInputRenderer({ inputsGroups, errors, handleChange })
+    const debouncedForm = useDebouncer(form, 500)
+
+    // Store debounced form data in localStorage
+    useEffect(() => {
+        if (useLocalStorage) {
+            localStorage.setItem('formData', JSON.stringify(debouncedForm));
+        }
+    }, [debouncedForm, useLocalStorage]);
 
     // Initialize form state with default values from inputs
     useEffect(() => {
@@ -36,7 +47,6 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
         const { name, value, checked, type, files, accept } = e.target as HTMLInputElement
         const newValue = type === InputType.Checkbox ? checked : value
         const file = files?.[0] // Get the selected file if it exists
-
         const inputValidation = allInputs.find(input => input.id === name)?.validation
 
         setErrors(prevErrors => ({ ...prevErrors, [name]: null })) // Clear previous error messages
@@ -56,11 +66,7 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
             setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
             // Update form state based on input type
         } else {
-            setForm(prevForm => {
-                const updatedForm = { ...prevForm, [name]: newValue }
-                if (useLocalStorage) localStorage.setItem(localStorageKey || 'formData', JSON.stringify(updatedForm))
-                return updatedForm
-            })
+            setForm(prevForm => ({ ...prevForm, [name]: newValue }))
         }
     }
 
@@ -118,6 +124,7 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
     // Reset form state
     const handleReset = () => {
         setForm({})
+        localStorage.setItem(localStorageKey || 'formData', JSON.stringify({}))
         setErrors({})
     }
 
