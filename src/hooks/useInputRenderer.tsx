@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IInput, InputType, IUseInputRendererProps } from "../interfaces";
 
 /**
@@ -8,6 +8,17 @@ import { IInput, InputType, IUseInputRendererProps } from "../interfaces";
  * @returns {JSX.Element[]} An array of JSX elements representing the rendered input fields.
  */
 export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInputRendererProps): JSX.Element[] {
+    const [selectedRadio, setSelectedRadio] = useState('');
+
+    useEffect(() => {
+        inputsGroups.forEach(group => {
+            if (group.inputs) {
+                const radioInputValue = group.inputs.find(input => input.inputType === InputType.Radio)?.defaultValue
+                if (radioInputValue) setSelectedRadio(radioInputValue)
+            }
+            return group
+        })
+    }, [])
 
     // Reference to the first input element for auto-focusing
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
@@ -53,8 +64,11 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
                                 name={id}
                                 value={option}
                                 required={required}
-                                onChange={handleChange}
-                                checked={defaultValue === option}
+                                onChange={(e) => {
+                                    handleChange(e);
+                                    setSelectedRadio(e.target.value);
+                                }}
+                                checked={selectedRadio === option}
                             />
                             <label htmlFor={`${id}--${option}`}>{option}</label>
                         </div>)}</div>
