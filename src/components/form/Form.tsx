@@ -10,7 +10,7 @@ import { useDebouncer } from '../../hooks/useDebouncer';
 export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, useLocalStorage, localStorageKey }: IForm): JSX.Element => {
 
     const [form, setForm] = useState<Record<string, string | boolean>>(() => {
-        return useLocalStorage ? JSON.parse(localStorage.getItem(localStorageKey || 'FormData') || '{}') : {}
+        return useLocalStorage ? JSON.parse(localStorage.getItem(localStorageKey || 'formData') || '{}') : {}
     }); // State to hold form values
     const [errors, setErrors] = useState<Record<string, string | null>>({}); // State to hold error messages
     const [allInputs] = useState<IInput[]>(getAllNestedInputs(inputsGroups)); // Retrieve all nested inputs from groups
@@ -20,7 +20,7 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
     const navigate = useNavigate()
 
     // Render inputs using the custom hook
-    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange })
+    const inputRender = useInputRenderer({ inputsGroups, errors, handleChange, form })
     const debouncedForm = useDebouncer(form, 500)
 
     // Store debounced form data in localStorage
@@ -44,12 +44,12 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
 
     // Handle input changes and validation
     function handleChange(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-        const { name, value, checked, type, files, accept } = e.target as HTMLInputElement
-        const newValue = type === InputType.Checkbox ? checked : value
-        const file = files?.[0] // Get the selected file if it exists
-        const inputValidation = allInputs.find(input => input.id === name)?.validation
+        const { name, value, checked, type, files, accept } = e.target as HTMLInputElement;
+        const newValue = type === InputType.Checkbox ? checked : value;
+        const file = files?.[0]; // Get the selected file if it exists
+        const inputValidation = allInputs.find(input => input.id === name)?.validation;
 
-        setErrors(prevErrors => ({ ...prevErrors, [name]: null })) // Clear previous error messages
+        setErrors(prevErrors => ({ ...prevErrors, [name]: null })); // Clear previous error messages
 
         // Validate file type and size if a file is uploaded
         if (file && accept && inputValidation?.maxFileSize) {
@@ -57,16 +57,19 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl, us
                 file.size / 1000000 < inputValidation.maxFileSize;
             // If invalid, set error and clear input value
             if (!isValidType) {
-                setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
-                e.target.value = ''
+                setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }));
+                e.target.value = '';
             }
-        }
-        // Validate input value against regex if provided
-        else if (inputValidation && !inputValidation.regex?.test(value)) {
-            setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }))
-            // Update form state based on input type
         } else {
-            setForm(prevForm => ({ ...prevForm, [name]: newValue }))
+            // Update form state based on input type
+            setForm(prevForm => ({ ...prevForm, [name]: newValue })); // This updates the form state
+
+            // Validate input value against regex if provided
+            if (inputValidation && !inputValidation.regex?.test(value)) {
+                setErrors(prevErrors => ({ ...prevErrors, [name]: inputValidation.errorMessage }));
+            } else {
+                setErrors(prevErrors => ({ ...prevErrors, [name]: null }))
+            }
         }
     }
 

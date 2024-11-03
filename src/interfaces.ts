@@ -32,7 +32,7 @@ export interface IInput {
     validation?: IInputValidation; // Validation rules for the input
     required?: boolean; // Indicates if the input is required
     options?: string[]; // Options for select or radio inputs
-    defaultValue?: string; // Default value for the input
+    defaultValue?: string | boolean; // Default value for the input
     accept?: string | string[]; // Acceptable file types for file inputs
 
 }
@@ -66,6 +66,7 @@ export interface IUseInputRendererProps {
     inputsGroups: IInpuitsGroups[]; // Input groups to render
     errors: Record<string, string | boolean | null>; // Error messages for inputs
     handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void; // Change handler for inputs
+    form: Record<string, string | boolean>
 }
 
 export interface ISubmitResponse<T> {

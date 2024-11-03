@@ -7,14 +7,14 @@ import { IInput, InputType, IUseInputRendererProps } from "../interfaces";
  * @param {IUseInputRendererProps} props - The props containing input groups, first input for focusing, error states, and change handler.
  * @returns {JSX.Element[]} An array of JSX elements representing the rendered input fields.
  */
-export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInputRendererProps): JSX.Element[] {
+export function useInputRenderer({ inputsGroups, errors, handleChange, form }: IUseInputRendererProps): JSX.Element[] {
     const [selectedRadio, setSelectedRadio] = useState('');
 
     useEffect(() => {
         inputsGroups.forEach(group => {
             if (group.inputs) {
                 const radioInputValue = group.inputs.find(input => input.inputType === InputType.Radio)?.defaultValue
-                if (radioInputValue) setSelectedRadio(radioInputValue)
+                if (radioInputValue) setSelectedRadio(radioInputValue.toString())
             }
             return group
         })
@@ -38,6 +38,7 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
         {/* Render group label if it exists */}
         {groupLabel && <h2>{groupLabel}</h2>}
         {inputs.map(({ inputType, options, required, id, validation, label, defaultValue, accept }) => {
+
             switch (inputType) {
                 case InputType.TextArea:
                     // Render a textarea input
@@ -46,6 +47,7 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
                         <textarea
                             name={id}
                             id={id}
+                            value={form[id] ? form[id].toString() : undefined}
                             required={required}
                             onChange={handleChange}
                             maxLength={validation?.maxLength}
@@ -78,8 +80,8 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
                     // Render a select input
                     return <div key={id}>
                         <label htmlFor={id}>{label}:</label>
-                        <select id={id} name={id} onChange={handleChange}>
-                            {options?.map(option => <option key={option} value={defaultValue}>{option}</option>)}
+                        <select id={id} name={id} onChange={handleChange} value={defaultValue || form[id] ? form[id].toString() : undefined}>
+                            {options?.map(option => <option key={option}>{option}</option>)}
                         </select>
                     </div>
 
@@ -103,7 +105,7 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
                     return <div key={id}>
                         <label htmlFor={id}>{label}:</label>
                         <input
-                            value={defaultValue}
+                            value={defaultValue || form[id] ? form[id]?.toString() : ''}
                             type={inputType}
                             id={id}
                             name={id}
@@ -111,6 +113,7 @@ export function useInputRenderer({ inputsGroups, errors, handleChange }: IUseInp
                             onChange={handleChange}
                             pattern={validation?.regex?.source}
                             ref={firstInputToRender.id === id ? inputRef as React.RefObject<HTMLInputElement> : undefined}
+                            checked={defaultValue || form[id] ? Boolean(form[id]) : false}
                             style={{ borderColor: errors[id] ? 'red' : '' }}
                         />
                         {errors[id] && <div className='input-error-message'>{validation?.errorMessage}</div>}

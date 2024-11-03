@@ -110,6 +110,7 @@ export const inputsGroups: IInpuitsGroups[] = [
                 id: 'getEmails',
                 inputType: InputType.Checkbox,
                 label: "Get Emails",
+                defaultValue: true
             },
             {
                 id: "userExperience",
