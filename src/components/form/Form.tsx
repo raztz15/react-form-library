@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from 'react'
-import { IForm, IInput, InputType, ISubmitResponse } from '../../interfaces'
+import { IForm, IInput, InputType } from '../../interfaces'
 import './Form.css'
 import { useInputRenderer } from '../../hooks/useInputRenderer';
 import { getAllNestedInputs, getOnClickLogic, submitForm } from '../../utils';
@@ -62,7 +62,7 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
     }
 
     // Handle form submission
-    async function handleSubmit<T>(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
+    async function handleSubmit(e: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
         e.preventDefault()
 
         // Reset previous errors
@@ -70,17 +70,24 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
 
         const currErrors: Record<string, string> = {}
         allInputs.forEach(input => {
-            const inputElement = document.getElementById(input.id) as HTMLInputElement
-            if (inputElement && input.required && !inputElement.value) {
-                currErrors[inputElement.id] = input.validation?.errorMessage || 'This field is required.'
-            } else if (input.validation?.regex?.test(inputElement.value)) {
-                currErrors[inputElement.id] = input.validation.errorMessage || 'Invalid input.'
+            if (input.required) {
+                const inputElement = document.getElementById(input.id) as HTMLInputElement
+                if (inputElement && !inputElement.value) {
+                    currErrors[inputElement.id] = input.validation?.errorMessage || 'This field is required.'
+                }
+                if (inputElement?.type === InputType.File && !inputElement.files?.[0]) {
+                    currErrors[inputElement.id] = input.validation?.errorMessage || 'A file is required.'
+                }
+                else if (!inputElement.value.match(input.validation?.regex || /.+/)) {
+                    currErrors[inputElement?.id] = input.validation?.errorMessage || 'Invalid input.'
+                }
             }
         })
 
         setErrors(currErrors)
         // Check for errors or empty form
-        if (Object.values(currErrors).some(error => error !== null) || Object.values(form).length === 0) {
+        if (Object.keys(currErrors).length > 0) {
+            setErrors(currErrors)
             return
         } else {
             try {
@@ -95,8 +102,8 @@ export const Form = ({ inputsGroups, buttons, submitUrl, successSubmitionUrl }: 
                     // Navigate to the success URL if provided
                     navigate(successSubmitionUrl)
                 } else {
-                    {/*TODO ---> Check if this interface is needed*/ }
-                    setSubmitError((response as unknown as ISubmitResponse<T>).message || 'Submission failed. Please try again.')
+                    console.warn('Success URL is not defined.')
+                    setSubmitError('Submission failed. Please try again.')
                 }
             } catch (error) {
                 console.error('Form submission error: ', error)
